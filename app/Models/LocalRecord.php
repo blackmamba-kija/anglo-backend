@@ -25,4 +25,8 @@ class LocalRecord extends Model
         'unit',
         'status',
     ];
+
+    protected $casts = [
+        'quantity' => 'integer',
+    ];
 }

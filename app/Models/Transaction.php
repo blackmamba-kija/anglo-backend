@@ -25,6 +25,10 @@ class Transaction extends Model
         'initiated_by',
     ];
 
+    protected $casts = [
+        'quantity' => 'integer',
+    ];
+
     public function toStation()
     {
         return $this->belongsTo(Station::class, 'to_station_id');

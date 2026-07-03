@@ -22,6 +22,11 @@ class ConsumableItem extends Model
         'reorder_level',
     ];
 
+    protected $casts = [
+        'quantity' => 'integer',
+        'reorder_level' => 'integer',
+    ];
+
     public function station()
     {
         return $this->belongsTo(Station::class);

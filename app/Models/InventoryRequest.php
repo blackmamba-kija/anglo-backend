@@ -22,6 +22,11 @@ class InventoryRequest extends Model
         'consumable_id',
     ];
 
+    protected $casts = [
+        'quantity' => 'integer',
+        'reorder_level' => 'integer',
+    ];
+
     // Relationships
     public function station()
     {
