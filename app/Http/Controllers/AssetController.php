@@ -23,9 +23,9 @@ class AssetController extends Controller
 
     public function store(Request $request)
     {
-        // Only procurement role can create assets
-        if ($request->user() && $request->user()->role !== 'procurement') {
-            return response()->json(['message' => 'Forbidden: only procurement can register assets'], 403);
+        // Only procurement and manager roles can create assets
+        if ($request->user() && !in_array($request->user()->role, ['procurement', 'manager'])) {
+            return response()->json(['message' => 'Forbidden: only procurement and managers can register assets'], 403);
         }
         $validated = $request->validate([
             'id' => 'required|string|unique:assets,id',

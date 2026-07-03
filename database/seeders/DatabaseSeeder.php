@@ -41,6 +41,9 @@ class DatabaseSeeder extends Seeder
             ['id' => 'c6', 'name' => 'Diesel Fuel', 'category' => 'Fuel', 'unit' => 'L', 'station_id' => 'st-03', 'quantity' => 7800, 'reorder_level' => 5000],
             ['id' => 'c7', 'name' => 'Flotation Reagent', 'category' => 'Reagent', 'unit' => 'kg', 'station_id' => 'st-04', 'quantity' => 140, 'reorder_level' => 200],
             ['id' => 'c8', 'name' => 'Coolant', 'category' => 'Consumable', 'unit' => 'L', 'station_id' => 'st-04', 'quantity' => 410, 'reorder_level' => 300],
+            // HQ Stock (Available for distribution)
+            ['id' => 'c_hq1', 'name' => 'HQ Diesel Reserve', 'category' => 'Fuel', 'unit' => 'L', 'station_id' => 'hq', 'quantity' => 50000, 'reorder_level' => 10000],
+            ['id' => 'c_hq2', 'name' => 'HQ Engine Oil', 'category' => 'Oil', 'unit' => 'L', 'station_id' => 'hq', 'quantity' => 5000, 'reorder_level' => 1000],
         ];
 
         foreach ($consumables as $c) {
@@ -56,6 +59,9 @@ class DatabaseSeeder extends Seeder
             ['id' => 'a5', 'tag' => 'TL-3301', 'name' => 'Torque Wrench Set', 'type' => 'Tool', 'station_id' => 'st-02', 'status' => 'operational', 'assigned_to' => null],
             ['id' => 'a6', 'tag' => 'VH-1044', 'name' => 'Toyota Land Cruiser Pickup', 'type' => 'Vehicle', 'station_id' => 'st-04', 'status' => 'operational', 'assigned_to' => 'Site Lead'],
             ['id' => 'a7', 'tag' => 'MC-2212', 'name' => 'Sandvik LH517i Loader', 'type' => 'Machinery', 'station_id' => 'st-04', 'status' => 'maintenance', 'assigned_to' => null],
+            // HQ Assets (Available for distribution)
+            ['id' => 'a_hq1', 'tag' => 'VH-HQ01', 'name' => 'HQ Service Truck', 'type' => 'Vehicle', 'station_id' => 'hq', 'status' => 'operational', 'assigned_to' => null],
+            ['id' => 'a_hq2', 'tag' => 'MC-HQ02', 'name' => 'HQ Backup Generator', 'type' => 'Machinery', 'station_id' => 'hq', 'status' => 'operational', 'assigned_to' => null],
         ];
 
         foreach ($assets as $a) {
