@@ -43,7 +43,7 @@ class AssetController extends Controller
 
         // Create a pending inventory request for the destination station
         if (class_exists('\App\Models\InventoryRequest')) {
-            \App\Models\InventoryRequest::create([
+            $invRequest = \App\Models\InventoryRequest::create([
                 'name' => $asset->name,
                 'category' => $asset->type,
                 'station_id' => $targetStationId,
@@ -54,6 +54,22 @@ class AssetController extends Controller
                 'requested_by' => $request->user()?->id ?? 1,
                 'asset_id' => $asset->id,
             ]);
+
+            // Also create a Transaction record so it shows up on the Distribution page tabs
+            if (class_exists('\App\Models\Transaction')) {
+                \App\Models\Transaction::create([
+                    'id'            => 't_ir_' . $invRequest->id,
+                    'date'          => date('Y-m-d'),
+                    'item_id'       => $asset->id,
+                    'item_name'     => $asset->name,
+                    'from_location' => 'HQ',
+                    'to_station_id' => $targetStationId,
+                    'quantity'      => 1,
+                    'unit'          => 'unit',
+                    'status'        => 'pending',
+                    'initiated_by'  => $request->user()?->name ?? 'Procurement',
+                ]);
+            }
         }
 
         return response()->json($asset, 201);

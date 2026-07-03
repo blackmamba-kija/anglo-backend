@@ -69,6 +69,22 @@ class InventoryRequestController extends Controller
             'consumable_id'  => $validated['consumable_id'] ?? null,
         ]);
 
+        // Also create a Transaction record so it shows up on the Distribution page tabs
+        if (class_exists('\App\Models\Transaction')) {
+            \App\Models\Transaction::create([
+                'id'            => 't_ir_' . $invRequest->id,
+                'date'          => date('Y-m-d'),
+                'item_id'       => $validated['asset_id'] ?? $validated['consumable_id'],
+                'item_name'     => $name,
+                'from_location' => 'HQ',
+                'to_station_id' => $validated['station_id'],
+                'quantity'      => $validated['quantity'] ?? 1,
+                'unit'          => isset($validated['asset_id']) ? 'unit' : ($consumable->unit ?? 'unit'),
+                'status'        => 'pending',
+                'initiated_by'  => $request->user()?->name ?? 'Procurement',
+            ]);
+        }
+
         // Deduct from inventory if consumable
         if (isset($validated['consumable_id'])) {
             $deductQty = $validated['quantity'] ?? 1;
@@ -140,6 +156,15 @@ class InventoryRequestController extends Controller
         $invRequest->status = 'accepted';
         $invRequest->save();
 
+        // Update corresponding Transaction status
+        if (class_exists('\App\Models\Transaction')) {
+            $transaction = \App\Models\Transaction::find('t_ir_' . $id);
+            if ($transaction) {
+                $transaction->status = 'received';
+                $transaction->save();
+            }
+        }
+
         return response()->json($invRequest);
     }
 
@@ -178,6 +203,15 @@ class InventoryRequestController extends Controller
 
         $invRequest->status = 'rejected';
         $invRequest->save();
+
+        // Update corresponding Transaction status
+        if (class_exists('\App\Models\Transaction')) {
+            $transaction = \App\Models\Transaction::find('t_ir_' . $id);
+            if ($transaction) {
+                $transaction->status = 'rejected';
+                $transaction->save();
+            }
+        }
 
         return response()->json($invRequest);
     }
