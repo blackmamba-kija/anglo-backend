@@ -20,6 +20,11 @@ class Asset extends Model
         'station_id',
         'status',
         'assigned_to',
+        'serial_number',
+        'model',
+        'purchase_date',
+        'purchase_cost',
+        'description',
     ];
 
     public function station()

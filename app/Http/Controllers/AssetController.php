@@ -35,6 +35,11 @@ class AssetController extends Controller
             'station_id' => 'required|string|exists:stations,id',
             'status' => 'required|string',
             'assigned_to' => 'nullable|string',
+            'serial_number' => 'nullable|string',
+            'model' => 'nullable|string',
+            'purchase_date' => 'nullable|date',
+            'purchase_cost' => 'nullable|numeric',
+            'description' => 'nullable|string',
         ]);
 
         $targetStationId = $validated['station_id'];
@@ -89,6 +94,11 @@ class AssetController extends Controller
             'station_id' => 'sometimes|string|exists:stations,id',
             'status' => 'sometimes|string',
             'assigned_to' => 'nullable|string',
+            'serial_number' => 'nullable|string',
+            'model' => 'nullable|string',
+            'purchase_date' => 'nullable|date',
+            'purchase_cost' => 'nullable|numeric',
+            'description' => 'nullable|string',
         ]);
 
         $asset->update($validated);
