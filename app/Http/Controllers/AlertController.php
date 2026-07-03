@@ -24,6 +24,7 @@ class AlertController extends Controller
                     'message' => "{$item->name} below reorder level ({$item->quantity}/{$item->reorder_level} {$item->unit}) at {$stationName}",
                     'severity' => $severity,
                     'at' => 'just now',
+                    'station_id' => $item->station_id,
                     'created_at' => now()->toIso8601String(),
                 ];
             }
@@ -38,6 +39,7 @@ class AlertController extends Controller
                 'message' => "{$tx->quantity} {$tx->unit} of {$tx->item_name} awaiting receipt from {$tx->from_location}",
                 'severity' => 'medium',
                 'at' => 'in transit',
+                'station_id' => $tx->to_station_id,
                 'created_at' => $tx->created_at ? $tx->created_at->toIso8601String() : now()->toIso8601String(),
             ];
         }
@@ -51,6 +53,7 @@ class AlertController extends Controller
                 'message' => "{$asset->name} ({$asset->tag}) is currently scheduled for maintenance",
                 'severity' => 'high',
                 'at' => 'active',
+                'station_id' => $asset->station_id,
                 'created_at' => $asset->created_at ? $asset->created_at->toIso8601String() : now()->toIso8601String(),
             ];
         }
