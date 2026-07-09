@@ -6,14 +6,28 @@ class DashboardController extends Controller
 {
     public function stockUsageTrend()
     {
-        $trend = [
-            ['month' => 'Jan', 'diesel' => 32000, 'oil' => 1800, 'reagent' => 900],
-            ['month' => 'Feb', 'diesel' => 34500, 'oil' => 2100, 'reagent' => 1100],
-            ['month' => 'Mar', 'diesel' => 36800, 'oil' => 1950, 'reagent' => 1250],
-            ['month' => 'Apr', 'diesel' => 35200, 'oil' => 2300, 'reagent' => 1180],
-            ['month' => 'May', 'diesel' => 38900, 'oil' => 2500, 'reagent' => 1320],
-            ['month' => 'Jun', 'diesel' => 41200, 'oil' => 2650, 'reagent' => 1410],
-        ];
+        $trend = [];
+        $months = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $months[] = \Carbon\Carbon::now()->subMonths($i)->format('Y-m');
+        }
+
+        foreach ($months as $month) {
+            $records = \App\Models\LocalRecord::where('type', 'issue_stock')
+                ->where('created_at', 'like', $month . '%')
+                ->get();
+            
+            $diesel = $records->filter(function($r) { return str_contains(strtolower($r->item_name), 'diesel'); })->sum('quantity');
+            $oil = $records->filter(function($r) { return str_contains(strtolower($r->item_name), 'oil') || str_contains(strtolower($r->item_name), 'petrol'); })->sum('quantity');
+            $reagent = $records->filter(function($r) { return str_contains(strtolower($r->item_name), 'maji') || str_contains(strtolower($r->item_name), 'reagent') || str_contains(strtolower($r->item_name), 'kuywa'); })->sum('quantity');
+
+            $trend[] = [
+                'month' => \Carbon\Carbon::parse($month . '-01')->format('M'),
+                'diesel' => $diesel,
+                'oil' => $oil,
+                'reagent' => $reagent
+            ];
+        }
 
         return response()->json($trend);
     }
