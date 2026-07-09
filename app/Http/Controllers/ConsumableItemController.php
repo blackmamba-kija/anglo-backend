@@ -48,7 +48,7 @@ class ConsumableItemController extends Controller
             'name' => 'sometimes|string',
             'category' => 'sometimes|string',
             'unit' => 'sometimes|string',
-            'station_id' => 'sometimes|string|exists:stations,id',
+            'station_id' => 'sometimes|nullable|string',
             'quantity' => 'sometimes|integer|min:0',
             'reorder_level' => 'sometimes|integer|min:0',
         ]);
