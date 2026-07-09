@@ -10,6 +10,7 @@ use App\Http\Controllers\AlertController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\InventoryRequestController;
+use App\Http\Controllers\ActivityLogController;
 
 use App\Http\Controllers\LocalRecordController;
 
@@ -28,3 +29,8 @@ Route::apiResource('users', UserController::class);
 Route::apiResource('alerts', AlertController::class);
 
 Route::get('dashboard/stock-usage-trend', [DashboardController::class, 'stockUsageTrend']);
+
+// Activity Logs
+Route::get('activity-logs/stats', [ActivityLogController::class, 'stats']);
+Route::delete('activity-logs/clear', [ActivityLogController::class, 'clear']);
+Route::apiResource('activity-logs', ActivityLogController::class)->only(['index', 'store', 'destroy']);
