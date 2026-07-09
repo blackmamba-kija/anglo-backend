@@ -45,13 +45,15 @@ class ConsumableItemController extends Controller
         }
 
         $validated = $request->validate([
-            'name' => 'sometimes|string',
-            'category' => 'sometimes|string',
-            'unit' => 'sometimes|string',
-            'station_id' => 'sometimes|nullable|string',
-            'quantity' => 'sometimes|integer|min:0',
+            'name'          => 'sometimes|string',
+            'category'      => 'sometimes|string',
+            'unit'          => 'sometimes|string',
+            'quantity'      => 'sometimes|integer|min:0',
             'reorder_level' => 'sometimes|integer|min:0',
+            // station_id intentionally omitted — not updatable after creation
         ]);
+        // Strip any station_id sent by the client to avoid exists:stations validation issues
+        unset($validated['station_id']);
 
         $item->update($validated);
         return response()->json($item);

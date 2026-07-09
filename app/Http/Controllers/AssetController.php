@@ -88,18 +88,20 @@ class AssetController extends Controller
         }
 
         $validated = $request->validate([
-            'tag' => 'sometimes|string|unique:assets,tag,' . $id,
-            'name' => 'sometimes|string',
-            'type' => 'sometimes|string',
-            'station_id' => 'sometimes|string|exists:stations,id',
-            'status' => 'sometimes|string',
-            'assigned_to' => 'nullable|string',
+            'tag'           => 'sometimes|string|unique:assets,tag,' . $id,
+            'name'          => 'sometimes|string',
+            'type'          => 'sometimes|string',
+            'status'        => 'sometimes|string',
+            'assigned_to'   => 'nullable|string',
             'serial_number' => 'nullable|string',
-            'model' => 'nullable|string',
+            'model'         => 'nullable|string',
             'purchase_date' => 'nullable|date',
             'purchase_cost' => 'nullable|numeric',
-            'description' => 'nullable|string',
+            'description'   => 'nullable|string',
+            // station_id intentionally omitted — not updatable after creation
         ]);
+        // Strip any station_id sent by the client to avoid exists:stations validation issues
+        unset($validated['station_id']);
 
         $asset->update($validated);
         return response()->json($asset);
