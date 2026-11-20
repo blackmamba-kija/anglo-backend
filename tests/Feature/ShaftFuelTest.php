@@ -35,6 +35,7 @@ class ShaftFuelTest extends TestCase
         $this->postJson('/api/shaft-fuel', [
             'station_id' => 'st-1', 'shaft_name' => 'Main Shaft', 'kind' => 'used',
             'quantity' => 75, 'date' => '2026-11-20', 'recorded_by' => 'Operator',
+            'issued_to' => 'Generator Team',
             'purpose' => 'Generator',
         ])->assertCreated();
 
@@ -46,6 +47,7 @@ class ShaftFuelTest extends TestCase
         $this->postJson('/api/shaft-fuel', [
             'station_id' => 'st-1', 'shaft_name' => 'Main Shaft', 'kind' => 'used',
             'quantity' => 1, 'date' => '2026-11-20', 'recorded_by' => 'Operator',
+            'issued_to' => 'Generator Team',
         ])->assertUnprocessable()->assertJsonValidationErrors('quantity');
     }
 }

@@ -11,7 +11,7 @@ class ShaftFuelEntry extends Model
 
     protected $fillable = [
         'id', 'station_id', 'shaft_name', 'kind', 'quantity', 'unit',
-        'item_name', 'source_consumable_id', 'date', 'recorded_by', 'purpose',
+        'item_name', 'source_consumable_id', 'date', 'recorded_by', 'issued_to', 'purpose',
     ];
 
     protected $casts = [

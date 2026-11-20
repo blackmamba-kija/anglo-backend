@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('source_consumable_id')->nullable();
             $table->date('date');
             $table->string('recorded_by');
+            $table->string('issued_to')->nullable();
             $table->string('purpose')->nullable();
             $table->timestamps();
 

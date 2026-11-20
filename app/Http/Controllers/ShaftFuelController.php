@@ -34,6 +34,7 @@ class ShaftFuelController extends Controller
             'quantity' => 'required|numeric|min:0.01',
             'date' => 'required|date',
             'recorded_by' => 'required|string|max:255',
+            'issued_to' => 'required_if:kind,used|nullable|string|max:255',
             'purpose' => 'nullable|string|max:500',
             'source_consumable_id' => 'required_if:kind,received|nullable|string|exists:consumable_items,id',
         ]);
@@ -43,6 +44,17 @@ class ShaftFuelController extends Controller
                 $source = ConsumableItem::lockForUpdate()->findOrFail($validated['source_consumable_id']);
                 if ($source->station_id !== 'hq') {
                     throw ValidationException::withMessages(['source_consumable_id' => 'Fuel must be dispatched from HQ stock.']);
+                }
+                $isFuel = str_contains(strtolower($source->category), 'fuel')
+                    || str_contains(strtolower($source->category), 'diesel')
+                    || str_contains(strtolower($source->category), 'petrol')
+                    || str_contains(strtolower($source->name), 'fuel')
+                    || str_contains(strtolower($source->name), 'diesel')
+                    || str_contains(strtolower($source->name), 'diezel')
+                    || str_contains(strtolower($source->name), 'petrol')
+                    || str_contains(strtolower($source->name), 'mafuta');
+                if (!$isFuel) {
+                    throw ValidationException::withMessages(['source_consumable_id' => 'Only fuel can be dispatched to a shaft.']);
                 }
                 if ($source->quantity < $validated['quantity']) {
                     throw ValidationException::withMessages(['quantity' => 'Insufficient fuel at HQ.']);
