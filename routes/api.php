@@ -12,6 +12,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\InventoryRequestController;
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\ShaftFuelController;
+use App\Http\Controllers\ShaftDailyReportController;
 
 use App\Http\Controllers\LocalRecordController;
 
@@ -32,6 +33,9 @@ Route::apiResource('alerts', AlertController::class);
 Route::get('dashboard/stock-usage-trend', [DashboardController::class, 'stockUsageTrend']);
 Route::get('shaft-fuel', [ShaftFuelController::class, 'index']);
 Route::post('shaft-fuel', [ShaftFuelController::class, 'store']);
+Route::get('shaft-daily-reports', [ShaftDailyReportController::class, 'index']);
+Route::post('shaft-daily-reports', [ShaftDailyReportController::class, 'store']);
+Route::put('shaft-daily-reports/{id}', [ShaftDailyReportController::class, 'update']);
 
 // Activity Logs
 Route::get('activity-logs/stats', [ActivityLogController::class, 'stats']);

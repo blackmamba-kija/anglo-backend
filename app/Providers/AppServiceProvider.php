@@ -27,5 +27,6 @@ class AppServiceProvider extends ServiceProvider
         \App\Models\InventoryRequest::observe(\App\Observers\ActivityObserver::class);
         \App\Models\LocalRecord::observe(\App\Observers\ActivityObserver::class);
         \App\Models\ShaftFuelEntry::observe(\App\Observers\ActivityObserver::class);
+        \App\Models\ShaftDailyReport::observe(\App\Observers\ActivityObserver::class);
     }
 }
