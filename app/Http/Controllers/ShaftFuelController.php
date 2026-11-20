@@ -61,10 +61,10 @@ class ShaftFuelController extends Controller
                     throw ValidationException::withMessages(['quantity' => 'Insufficient fuel at HQ.']);
                 }
                 $source->decrement('quantity', $validated['quantity']);
-                $fuelLabel = strtolower($source->category . ' ' . $source->name);
-                if (str_contains($fuelLabel, 'petrol')) {
+                $fuelLabel = strtolower($source->fuel_type . ' ' . $source->category . ' ' . $source->name);
+                if ($source->fuel_type === 'Petrol' || str_contains($fuelLabel, 'petrol')) {
                     $validated['item_name'] = 'Petrol';
-                } elseif (str_contains($fuelLabel, 'diesel') || str_contains($fuelLabel, 'diezel')) {
+                } elseif ($source->fuel_type === 'Diesel' || str_contains($fuelLabel, 'diesel') || str_contains($fuelLabel, 'diezel')) {
                     $validated['item_name'] = 'Diesel';
                 } else {
                     throw ValidationException::withMessages(['source_consumable_id' => 'Fuel category must be either Diesel or Petrol.']);

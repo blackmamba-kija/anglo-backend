@@ -16,6 +16,7 @@ class ConsumableItem extends Model
         'id',
         'name',
         'category',
+        'fuel_type',
         'unit',
         'station_id',
         'quantity',

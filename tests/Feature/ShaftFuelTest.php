@@ -65,7 +65,8 @@ class ShaftFuelTest extends TestCase
             'reorder_level' => 50,
         ])->assertCreated()
             ->assertJsonPath('name', 'Petrol')
-            ->assertJsonPath('category', 'Petrol')
+            ->assertJsonPath('category', 'Fuel')
+            ->assertJsonPath('fuel_type', 'Petrol')
             ->assertJsonPath('unit', 'L');
 
         $this->postJson('/api/consumables', [

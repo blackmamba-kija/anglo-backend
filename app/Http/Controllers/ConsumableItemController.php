@@ -29,6 +29,7 @@ class ConsumableItemController extends Controller
             'id' => 'required|string|unique:consumable_items,id',
             'name' => 'required|string',
             'category' => 'required|string',
+            'fuel_type' => 'nullable|string|in:Diesel,Petrol',
             'unit' => 'required|string',
             'station_id' => 'required|string|exists:stations,id',
             'quantity' => 'required|integer|min:0',
@@ -50,6 +51,7 @@ class ConsumableItemController extends Controller
         $validated = $request->validate([
             'name'          => 'sometimes|string',
             'category'      => 'sometimes|string',
+            'fuel_type'     => 'nullable|string|in:Diesel,Petrol',
             'unit'          => 'sometimes|string',
             'quantity'      => 'sometimes|integer|min:0',
             'reorder_level' => 'sometimes|integer|min:0',
@@ -66,7 +68,8 @@ class ConsumableItemController extends Controller
     {
         $category = trim((string) $request->input('category', $existing?->category ?? ''));
         $name = trim((string) $request->input('name', $existing?->name ?? ''));
-        $label = strtolower($category . ' ' . $name);
+        $requestedType = trim((string) $request->input('fuel_type', $existing?->fuel_type ?? ''));
+        $label = strtolower($category . ' ' . $name . ' ' . $requestedType);
         $looksLikeFuel = str_contains($label, 'fuel')
             || str_contains($label, 'diesel')
             || str_contains($label, 'diezel')
@@ -76,9 +79,9 @@ class ConsumableItemController extends Controller
             return;
         }
 
-        if (str_contains($label, 'petrol')) {
+        if ($requestedType === 'Petrol' || str_contains($label, 'petrol')) {
             $fuelType = 'Petrol';
-        } elseif (str_contains($label, 'diesel') || str_contains($label, 'diezel')) {
+        } elseif ($requestedType === 'Diesel' || str_contains($label, 'diesel') || str_contains($label, 'diezel')) {
             $fuelType = 'Diesel';
         } else {
             throw ValidationException::withMessages([
@@ -88,7 +91,8 @@ class ConsumableItemController extends Controller
 
         $request->merge([
             'name' => $fuelType,
-            'category' => $fuelType,
+            'category' => 'Fuel',
+            'fuel_type' => $fuelType,
             'unit' => 'L',
         ]);
     }
