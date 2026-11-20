@@ -36,6 +36,7 @@ class ShaftFuelTest extends TestCase
             'station_id' => 'st-1', 'shaft_name' => 'Main Shaft', 'kind' => 'used',
             'quantity' => 75, 'date' => '2026-11-20', 'recorded_by' => 'Operator',
             'issued_to' => 'Generator Team',
+            'item_name' => 'Diesel',
             'purpose' => 'Generator',
         ])->assertCreated();
 
@@ -48,6 +49,33 @@ class ShaftFuelTest extends TestCase
             'station_id' => 'st-1', 'shaft_name' => 'Main Shaft', 'kind' => 'used',
             'quantity' => 1, 'date' => '2026-11-20', 'recorded_by' => 'Operator',
             'issued_to' => 'Generator Team',
+            'item_name' => 'Diesel',
         ])->assertUnprocessable()->assertJsonValidationErrors('quantity');
+    }
+
+    public function test_registered_fuel_is_recorded_as_diesel_or_petrol_category(): void
+    {
+        $this->postJson('/api/consumables', [
+            'id' => 'fuel-2',
+            'name' => 'Petrol Fuel',
+            'category' => 'Fuel',
+            'unit' => 'gallons',
+            'station_id' => 'hq',
+            'quantity' => 500,
+            'reorder_level' => 50,
+        ])->assertCreated()
+            ->assertJsonPath('name', 'Petrol')
+            ->assertJsonPath('category', 'Petrol')
+            ->assertJsonPath('unit', 'L');
+
+        $this->postJson('/api/consumables', [
+            'id' => 'fuel-3',
+            'name' => 'Fuel',
+            'category' => 'Fuel',
+            'unit' => 'L',
+            'station_id' => 'hq',
+            'quantity' => 500,
+            'reorder_level' => 50,
+        ])->assertUnprocessable()->assertJsonValidationErrors('category');
     }
 }

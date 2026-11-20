@@ -37,6 +37,7 @@ class ShaftFuelController extends Controller
             'issued_to' => 'required_if:kind,used|nullable|string|max:255',
             'purpose' => 'nullable|string|max:500',
             'source_consumable_id' => 'required_if:kind,received|nullable|string|exists:consumable_items,id',
+            'item_name' => 'required_if:kind,used|nullable|string|max:255',
         ]);
 
         $entry = DB::transaction(function () use ($validated) {
@@ -60,17 +61,24 @@ class ShaftFuelController extends Controller
                     throw ValidationException::withMessages(['quantity' => 'Insufficient fuel at HQ.']);
                 }
                 $source->decrement('quantity', $validated['quantity']);
-                $validated['item_name'] = $source->name;
+                $fuelLabel = strtolower($source->category . ' ' . $source->name);
+                if (str_contains($fuelLabel, 'petrol')) {
+                    $validated['item_name'] = 'Petrol';
+                } elseif (str_contains($fuelLabel, 'diesel') || str_contains($fuelLabel, 'diezel')) {
+                    $validated['item_name'] = 'Diesel';
+                } else {
+                    throw ValidationException::withMessages(['source_consumable_id' => 'Fuel category must be either Diesel or Petrol.']);
+                }
                 $validated['unit'] = $source->unit;
             } else {
                 $balance = ShaftFuelEntry::where('station_id', $validated['station_id'])
                     ->where('shaft_name', $validated['shaft_name'])
+                    ->where('item_name', $validated['item_name'])
                     ->selectRaw("COALESCE(SUM(CASE WHEN kind = 'received' THEN quantity ELSE -quantity END), 0) as balance")
                     ->value('balance');
                 if ((float) $balance < (float) $validated['quantity']) {
                     throw ValidationException::withMessages(['quantity' => 'Insufficient fuel at this shaft.']);
                 }
-                $validated['item_name'] = 'Shaft Fuel';
                 $validated['unit'] = 'L';
             }
 

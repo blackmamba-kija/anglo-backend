@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ConsumableItem;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class ConsumableItemController extends Controller
 {
@@ -23,6 +24,7 @@ class ConsumableItemController extends Controller
 
     public function store(Request $request)
     {
+        $this->normalizeFuel($request);
         $validated = $request->validate([
             'id' => 'required|string|unique:consumable_items,id',
             'name' => 'required|string',
@@ -44,6 +46,7 @@ class ConsumableItemController extends Controller
             return response()->json(['message' => 'Consumable item not found'], 404);
         }
 
+        $this->normalizeFuel($request, $item);
         $validated = $request->validate([
             'name'          => 'sometimes|string',
             'category'      => 'sometimes|string',
@@ -57,6 +60,37 @@ class ConsumableItemController extends Controller
 
         $item->update($validated);
         return response()->json($item);
+    }
+
+    private function normalizeFuel(Request $request, ?ConsumableItem $existing = null): void
+    {
+        $category = trim((string) $request->input('category', $existing?->category ?? ''));
+        $name = trim((string) $request->input('name', $existing?->name ?? ''));
+        $label = strtolower($category . ' ' . $name);
+        $looksLikeFuel = str_contains($label, 'fuel')
+            || str_contains($label, 'diesel')
+            || str_contains($label, 'diezel')
+            || str_contains($label, 'petrol');
+
+        if (!$looksLikeFuel) {
+            return;
+        }
+
+        if (str_contains($label, 'petrol')) {
+            $fuelType = 'Petrol';
+        } elseif (str_contains($label, 'diesel') || str_contains($label, 'diezel')) {
+            $fuelType = 'Diesel';
+        } else {
+            throw ValidationException::withMessages([
+                'category' => 'Select a fuel type: Diesel or Petrol.',
+            ]);
+        }
+
+        $request->merge([
+            'name' => $fuelType,
+            'category' => $fuelType,
+            'unit' => 'L',
+        ]);
     }
 
     public function destroy($id)
