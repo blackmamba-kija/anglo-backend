@@ -48,6 +48,10 @@ class InventoryRequestController extends Controller
             $category = $asset->type;
         } elseif (isset($validated['consumable_id'])) {
             $consumable = ConsumableItem::findOrFail($validated['consumable_id']);
+            $deductQty = $validated['quantity'] ?? 1;
+            if ($consumable->quantity < $deductQty) {
+                return response()->json(['message' => 'Insufficient consumable quantity'], 422);
+            }
             $name = $consumable->name;
             $category = $consumable->category;
         } else {
@@ -88,10 +92,6 @@ class InventoryRequestController extends Controller
         // Deduct from inventory if consumable
         if (isset($validated['consumable_id'])) {
             $deductQty = $validated['quantity'] ?? 1;
-            // Ensure enough stock
-            if ($consumable->quantity < $deductQty) {
-                return response()->json(['message' => 'Insufficient consumable quantity'], 400);
-            }
             $consumable->quantity -= $deductQty;
             $consumable->save();
         }

@@ -26,11 +26,16 @@ class AuthController extends Controller
         }
 
         // Support plain-text passwords stored during seeding (legacy) AND hashed passwords
-        $passwordOk = Hash::check($request->password, $user->password)
-            || $request->password === $user->password;
+        $hashedPassword = Hash::check($request->password, $user->password);
+        $legacyPassword = !$hashedPassword && hash_equals((string) $user->password, (string) $request->password);
+        $passwordOk = $hashedPassword || $legacyPassword;
 
         if (!$passwordOk) {
             return response()->json(['message' => 'Invalid credentials'], 401);
+        }
+
+        if ($legacyPassword) {
+            $user->forceFill(['password' => Hash::make($request->password)])->save();
         }
 
         return response()->json([
