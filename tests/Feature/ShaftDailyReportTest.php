@@ -28,9 +28,9 @@ class ShaftDailyReportTest extends TestCase
         $created = $this->postJson('/api/shaft-daily-reports', $payload)
             ->assertCreated()->assertJsonPath('status', 'draft')->json();
 
-        $payload['status'] = 'submitted';
+        $payload['status'] = 'pending_operator';
         $this->putJson('/api/shaft-daily-reports/' . $created['id'], $payload)
-            ->assertOk()->assertJsonPath('status', 'submitted');
+            ->assertOk()->assertJsonPath('status', 'pending_operator');
 
         $this->getJson('/api/shaft-daily-reports?station_id=st-1')
             ->assertOk()->assertJsonCount(1)->assertJsonPath('0.production_tonnes', 420);

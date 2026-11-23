@@ -17,7 +17,7 @@ class ShaftDailyReportController extends Controller
             'report_date' => 'required|date',
             'shift' => 'required|string|in:Day,Night',
             'supervisor_name' => 'required|string|max:255',
-            'status' => ['required', Rule::in(['draft', 'submitted'])],
+            'status' => ['required', Rule::in(['draft', 'pending_operator', 'pending_security', 'pending_analyst', 'approved'])],
             'production_tonnes' => 'required|numeric|min:0',
             'advance_meters' => 'required|numeric|min:0',
             'workforce_count' => 'required|integer|min:0',
@@ -48,7 +48,7 @@ class ShaftDailyReportController extends Controller
     {
         $validated = $request->validate($this->rules());
         $validated['id'] = 'SDR-' . Str::uuid();
-        $validated['submitted_at'] = $validated['status'] === 'submitted' ? now() : null;
+        $validated['submitted_at'] = $validated['status'] !== 'draft' ? now() : null;
         $report = ShaftDailyReport::create($validated);
         return response()->json($report, 201);
     }
@@ -57,7 +57,7 @@ class ShaftDailyReportController extends Controller
     {
         $report = ShaftDailyReport::findOrFail($id);
         $validated = $request->validate($this->rules());
-        $validated['submitted_at'] = $validated['status'] === 'submitted'
+        $validated['submitted_at'] = $validated['status'] !== 'draft'
             ? ($report->submitted_at ?? now()) : null;
         $report->update($validated);
         return response()->json($report->fresh());

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
@@ -28,7 +29,9 @@ class UserController extends Controller
             'id' => 'required|string|unique:users,id',
             'name' => 'required|string',
             'email' => 'required|email|unique:users,email',
-            'role' => 'required|string',
+            'role' => ['required', Rule::in(['manager', 'procurement', 'store_keeper', 'site_manager', 'operation_manager', 'operator', 'security_site', 'supervisor', 'data_analyst'])],
+            'permissions' => 'nullable|array',
+            'permissions.*' => 'string|in:home,dashboard,inventory,distribution,assets,stations,users,reports,operations,shaft_operations,inventory_actions',
             'station_id' => 'nullable|string',
             'password' => 'nullable|string',
         ]);
@@ -52,7 +55,9 @@ class UserController extends Controller
         $validated = $request->validate([
             'name' => 'sometimes|string',
             'email' => 'sometimes|email|unique:users,email,' . $id,
-            'role' => 'sometimes|string',
+            'role' => ['sometimes', Rule::in(['manager', 'procurement', 'store_keeper', 'site_manager', 'operation_manager', 'operator', 'security_site', 'supervisor', 'data_analyst'])],
+            'permissions' => 'nullable|array',
+            'permissions.*' => 'string|in:home,dashboard,inventory,distribution,assets,stations,users,reports,operations,shaft_operations,inventory_actions',
             'station_id' => 'nullable|string',
             'password' => 'nullable|string',
         ]);
