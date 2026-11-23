@@ -31,7 +31,7 @@ class UserController extends Controller
             'email' => 'required|email|unique:users,email',
             'role' => ['required', Rule::in(['manager', 'procurement', 'store_keeper', 'site_manager', 'operation_manager', 'operator', 'security_site', 'supervisor', 'data_analyst'])],
             'permissions' => 'nullable|array',
-            'permissions.*' => 'string|in:home,dashboard,inventory,distribution,assets,stations,users,reports,operations,shaft_operations,inventory_actions',
+            'permissions.*' => 'string|in:home,dashboard,inventory,inventory_add,inventory_edit,inventory_delete,inventory_restock,inventory_actions,distribution,distribution_issue,distribution_receive,distribution_shaft_fuel,assets,assets_add,assets_edit,assets_delete,assets_assign,stations,stations_add,stations_edit,stations_delete,users,users_create,users_edit,users_delete,permissions_manage,activity_logs,reports,reports_export,operations,operations_issue_stock,operations_borrow_stock,operations_assign_asset,operations_requests,shaft_operations,shaft_register_db,shaft_view_db,shaft_register_deliveries,shaft_fuel,shaft_daily_report',
             'station_id' => 'nullable|string',
             'password' => 'nullable|string',
         ]);
@@ -57,7 +57,7 @@ class UserController extends Controller
             'email' => 'sometimes|email|unique:users,email,' . $id,
             'role' => ['sometimes', Rule::in(['manager', 'procurement', 'store_keeper', 'site_manager', 'operation_manager', 'operator', 'security_site', 'supervisor', 'data_analyst'])],
             'permissions' => 'nullable|array',
-            'permissions.*' => 'string|in:home,dashboard,inventory,distribution,assets,stations,users,reports,operations,shaft_operations,inventory_actions',
+            'permissions.*' => 'string|in:home,dashboard,inventory,inventory_add,inventory_edit,inventory_delete,inventory_restock,inventory_actions,distribution,distribution_issue,distribution_receive,distribution_shaft_fuel,assets,assets_add,assets_edit,assets_delete,assets_assign,stations,stations_add,stations_edit,stations_delete,users,users_create,users_edit,users_delete,permissions_manage,activity_logs,reports,reports_export,operations,operations_issue_stock,operations_borrow_stock,operations_assign_asset,operations_requests,shaft_operations,shaft_register_db,shaft_view_db,shaft_register_deliveries,shaft_fuel,shaft_daily_report',
             'station_id' => 'nullable|string',
             'password' => 'nullable|string',
         ]);
